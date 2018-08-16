@@ -1,0 +1,14 @@
+{{ define "content"}}
+<div class="row">
+        <div class="col-md-8">
+            <ul class="list-group">
+                {{ range $id, $title := .Listing }}
+                <li class="list-group-item"><a href="/content/{{ $id }}">{{ $title }}</a></li>
+                {{ end }}
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <a href="/addnote" class="btn btn-primary btn-sm">Создать заметку</a>
+        </div>
+    </div>
+{{ end }}

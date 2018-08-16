@@ -1,32 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/css/style.css">
-    
-
-    <title></title>
-</head>
-<body>
-        
-
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+{{ define "content" }}        
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
         <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
-    <div class="container">
-        <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" href="/">
-            <img src="/static/images/logo.png"  height="50" class="d-inline-block align-top" alt="">
-            Archelon
-            </a>
-        </nav>
-        <h1>Создать заметку</h1>
         <form method="POST" action="/addnote">
             <div class="form-group"  >
                 <label for="noteTitle">Заголовок заметки</label>
@@ -45,5 +20,4 @@
                 spellChecker: false,
             });
             </script>
-</body>
-</html>
+{{ end }}

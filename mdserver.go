@@ -16,6 +16,7 @@ import (
 func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/content/{id}", noteHandler)
+	router.HandleFunc("/delnote/{id}", delNoteHandler)
 	router.HandleFunc("/addnote", addNoteHandler)
 	router.HandleFunc("/", indexHandler)
 	http.Handle("/", router)
@@ -33,6 +34,7 @@ type Post struct {
 }
 
 type Note struct {
+	Id    int
 	Title string
 	Body  template.HTML
 }
@@ -63,11 +65,11 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	db.Close()
 
 	p := Post{
-		Title:   "Список заметок:",
+		Title:   "Список заметок",
 		Listing: noteList,
 	}
 
-	t, _ := template.ParseFiles("templates/base.html")
+	t, _ := template.ParseFiles("templates/base.html", "templates/home.html")
 	t.Execute(w, p)
 }
 
@@ -92,18 +94,23 @@ func noteHandler(w http.ResponseWriter, r *http.Request) {
 	// str := string(blackfriday.Run(bs))
 
 	n := Note{
+		Id:    id,
 		Title: title,
 		Body:  template.HTML(str),
 	}
-	t, _ := template.ParseFiles("templates/note.html")
+	t, _ := template.ParseFiles("templates/base.html", "templates/note.html")
 	t.Execute(w, n)
 }
 
 func addNoteHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
-		t, _ := template.ParseFiles("templates/addnote.html")
-		t.Execute(w, "Добавить заметку")
+		n := Note{
+			Title: "Создать заметку",
+		}
+		t, err := template.ParseFiles("templates/base.html", "templates/addnote.html")
+		checkErr(err)
+		t.Execute(w, n)
 
 	case "POST":
 		err := r.ParseForm()
@@ -116,8 +123,19 @@ func addNoteHandler(w http.ResponseWriter, r *http.Request) {
 		defer db.Close()
 		result, err := db.Exec("insert into notes (title, body) values ($1, $2)", noteTitle, noteBody)
 		checkErr(err)
-		fmt.Println(result.LastInsertId())
+		fmt.Println(result.LastInsertId)
 		http.Redirect(w, r, "/", 301)
 	}
+}
 
+func delNoteHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	noteid := vars["id"]
+	db, err := sql.Open("sqlite3", "./mdnotes_db.sqlite")
+	checkErr(err)
+	defer db.Close()
+	res, err := db.Exec("delete from notes where id = ?", noteid)
+	checkErr(err)
+	fmt.Println(res.RowsAffected())
+	http.Redirect(w, r, "/", 301)
 }
